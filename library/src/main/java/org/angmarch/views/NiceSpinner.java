@@ -70,6 +70,7 @@ public class NiceSpinner extends AppCompatTextView {
     private OnSpinnerItemSelectedListener onSpinnerItemSelectedListener;
 
     private boolean isArrowHidden;
+    private boolean hideSelectedItem;
     private int textColor;
     private int backgroundSelector;
     private int arrowDrawableTint;
@@ -155,7 +156,7 @@ public class NiceSpinner extends AppCompatTextView {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // The selected item is not displayed within the list, so when the selected position is equal to
                 // the one of the currently selected item it gets shifted to the next item.
-                if (position >= selectedIndex && position < adapter.getCount()) {
+                if (hideSelectedItem && position >= selectedIndex && position < adapter.getCount()) {
                     position++;
                 }
                 selectedIndex = position;
@@ -192,6 +193,7 @@ public class NiceSpinner extends AppCompatTextView {
         });
 
         isArrowHidden = typedArray.getBoolean(R.styleable.NiceSpinner_hideArrow, false);
+        hideSelectedItem = typedArray.getBoolean(R.styleable.NiceSpinner_hideSelectedItem, true);
         arrowDrawableTint = typedArray.getColor(R.styleable.NiceSpinner_arrowTint, getResources().getColor(android.R.color.black));
         arrowDrawableResId = typedArray.getResourceId(R.styleable.NiceSpinner_arrowDrawable, R.drawable.arrow);
         dropDownListPaddingBottom =
@@ -351,12 +353,14 @@ public class NiceSpinner extends AppCompatTextView {
 
     public <T> void attachDataSource(@NonNull List<T> list) {
         adapter = new NiceSpinnerAdapter<>(getContext(), list, textColor, backgroundSelector, spinnerTextFormatter, horizontalAlignment);
+        adapter.setHideSelectedItem(hideSelectedItem);
         setAdapterInternal(adapter);
     }
 
     public void setAdapter(ListAdapter adapter) {
         this.adapter = new NiceSpinnerAdapterWrapper(getContext(), adapter, textColor, backgroundSelector,
                 spinnerTextFormatter, horizontalAlignment);
+        this.adapter.setHideSelectedItem(hideSelectedItem);
         setAdapterInternal(this.adapter);
     }
 
@@ -488,6 +492,15 @@ public class NiceSpinner extends AppCompatTextView {
         if(listView != null) {
             listView.performItemClick(view, position, id);
         }
+    }
+
+    public boolean isHideSelectedItem() {
+        return hideSelectedItem;
+    }
+
+    public void setHideSelectedItem(boolean hideSelectedItem) {
+        this.hideSelectedItem = hideSelectedItem;
+        this.adapter.setHideSelectedItem(hideSelectedItem);
     }
 
     public OnSpinnerItemSelectedListener getOnSpinnerItemSelectedListener() {

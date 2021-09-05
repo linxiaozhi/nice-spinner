@@ -34,6 +34,8 @@ public abstract class NiceSpinnerBaseAdapter<T> extends BaseAdapter {
     private int textColor;
     private int backgroundSelector;
 
+    protected boolean hideSelectedItem = true;
+
     int selectedIndex;
 
     NiceSpinnerBaseAdapter(
@@ -101,6 +103,14 @@ public abstract class NiceSpinnerBaseAdapter<T> extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public boolean isHideSelectedItem() {
+        return hideSelectedItem;
+    }
+
+    public void setHideSelectedItem(boolean hideSelectedItem) {
+        this.hideSelectedItem = hideSelectedItem;
     }
 
     @Override
